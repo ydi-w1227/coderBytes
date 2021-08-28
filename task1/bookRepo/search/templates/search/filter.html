@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% load static wagtailcore_tags %}
+
+{% block body_class %}template-filterresults{% endblock %}
+
+{% block title %}Filter{% endblock %}
+
+{% block content %}
+    <h1>Filter</h1>
+
+    <form action="{% url 'filter' %}" method="get">
+        <input type="text" name="filter"{% if filter_query %} value="{{ filter_query }}"{% endif %}>
+        <input type="submit" value="Filter Author" class="button">
+
+    </form>
+
+    {% if filter_results %}
+        <ul>
+            {% for result in filter_results %}
+                <li>
+                    <h4><a href="{% pageurl result %}">{{ result }}</a></h4>
+                    {% if result.filter_description %}
+                        {{ result.filter_description }}
+                    {% endif %}
+                </li>
+            {% endfor %}
+        </ul>
+
+        {% if filter_results.has_previous %}
+            <a href="{% url 'filter' %}?filter={{ filter_query|urlencode }}&amp;page={{ filter_results.previous_page_number }}">Previous</a>
+        {% endif %}
+
+        {% if filter_results.has_next %}
+            <a href="{% url 'filter' %}?filter={{ filter_query|urlencode }}&amp;page={{ filter_results.next_page_number }}">Next</a>
+        {% endif %}
+    {% elif filter_query %}
+        No results found
+    {% endif %}
+{% endblock %}
